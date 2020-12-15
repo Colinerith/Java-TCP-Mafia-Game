@@ -13,9 +13,11 @@ public class Server implements Runnable {
 	
 	public Server(Socket clientSocket) {
 		this.clientSocket = clientSocket;
-	}
+	} 
 	public static void main(String[] args) {
 		Scanner scv = new Scanner(System.in);
+		
+		// 이 아래부터 함수로 따로 빼야할 것 같
 		System.out.println("Game start...");
 		System.out.print("Enter the number of players(5~8): ");
 		int playerNum = scv.nextInt();
@@ -28,11 +30,18 @@ public class Server implements Runnable {
 				clientSocket = sSocket.accept();
 				Server tes = new Server(clientSocket);//개별스레드 생성. 수락 했을 때의 client 주소(정보)가 담김
 				new Thread(tes).start();
-			}			
+			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("스레드 에코 서버 종료");
+		System.out.println("The Winner is: ");
+		System.out.println("Restart game? (Y/N): ");
+		char restart = sc.next().charAt(0);
+		
+		// 함수 다시 부름
+		//if(restart == 'Y') {
+		//	
+		//}
 	}
 
 	@Override
