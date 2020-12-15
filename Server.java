@@ -1,4 +1,4 @@
-mport java.io.BufferedReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -6,21 +6,27 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.Scanner;
 
-public class TEServer implements Runnable {
+public class Server implements Runnable {
 	private static Socket clientSocket;
 	
-	public TEServer(Socket clientSocket) {
+	public Server(Socket clientSocket) {
 		this.clientSocket = clientSocket;
 	}
 	public static void main(String[] args) {
-		System.out.println("쓰레드 에코 서버 시작");
+		Scanner scv = new Scanner(System.in);
+		System.out.println("Game start...");
+		System.out.print("Enter the number of players(5~8): ");
+		int playerNum = scv.nextInt();
+		//int temp = playerNum;
 		try(ServerSocket sSocket = new ServerSocket(10000)){
 			//계속 접속하는 클라이언트들에 대한 무한 서비스를 하려면
-			while(true) {
+			//while(true) {
+			for(int j=0; j < playerNum; j++){ //입력한 플레이어 수만큼 클라이언트 대기
 				System.out.println("연결 대기 중...");
 				clientSocket = sSocket.accept();
-				TEServer tes = new TEServer(clientSocket);//개별스레드 생성. 수락 했을 때의 client 주소(정보)가 담김
+				Server tes = new Server(clientSocket);//개별스레드 생성. 수락 했을 때의 client 주소(정보)가 담김
 				new Thread(tes).start();
 			}			
 		} catch(IOException e) {
@@ -36,11 +42,6 @@ public class TEServer implements Runnable {
 			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 		){
-//			String inputLine;
-//			while((inputLine = br.readLine())!=null) {
-//				System.out.println(Thread.currentThread().getName() + "클라이언트 요청: "+inputLine);
-//				out.println(inputLine); //메아리
-//			}
 			Supplier<String> socketInput = () -> {
 				try {
 					return br.readLine();
