@@ -8,14 +8,14 @@ import java.util.Scanner;
 
 public class Client {
 	public static void main(String[] args) {
-		System.out.println("에코 클라이언트 시작~");
+		System.out.println("Please wait...");
 			try {
 				InetAddress localAddress = InetAddress.getLocalHost();
 				try (Socket cSocket = new Socket(localAddress, 10000);//Socket cSocket = new Socket("127.0.0.1", 9000);
 					PrintWriter out = new PrintWriter(cSocket.getOutputStream(), true);
 					BufferedReader br = new BufferedReader(new InputStreamReader(cSocket.getInputStream()))
 					    ) {
-					System.out.println("서버에 연결됨!");
+					System.out.println("connected!");
 					Scanner scv = new Scanner(System.in);
 					while (true) {
 						System.out.print("메세지 입력 : ");
@@ -23,7 +23,7 @@ public class Client {
 						if ("quit".equalsIgnoreCase(inputLine)) {break;}
 						out.println(inputLine); // 서버에 키보드 입력 스트링을 전송
 						String response = br.readLine();
-						System.out.println("서버 응답 : " + response);
+						System.out.println(response);
 					}
 					scv.close();
 				 }

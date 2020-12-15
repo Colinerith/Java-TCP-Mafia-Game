@@ -46,7 +46,7 @@ public class Server implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("클라이언트 " + Thread.currentThread() + " 연결됨");
+		System.out.println("클라이언트 " + Thread.currentThread().getName() + " 연결됨");
 		try (
 			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
