@@ -5,7 +5,7 @@ public class test implements Runnable{
 	test(int i){
 		this.id = i;
 	}
-	    public static void main(String[] args){
+	    public static void main(String[] args) throws InterruptedException{
 	    	test tst1 = new test(1);
 	    	test tst2 = new test(2);
 	    	test tst3 = new test(3);
