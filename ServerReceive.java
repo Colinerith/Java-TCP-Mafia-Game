@@ -15,7 +15,7 @@ public class ServerReceive implements Runnable {
 	public String receivedMsg;
 	// private char role;
 	public char status; // w:수신 대기, r:수신
-
+ 
 	ServerReceive(Socket clientSocket, int id, char r) {
 		this.playerId = id;
 		this.clientSocket = clientSocket;

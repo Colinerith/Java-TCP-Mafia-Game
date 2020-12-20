@@ -31,7 +31,7 @@ public class ServerSend implements Runnable {
 		try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);) {
 			out.print("You're player" + playerId + ". Role: ");
 			if (this.role == 'm')
-				out.println("Mafia");
+				out.println("Mafia"); 
 			else if (this.role == 'p')
 				out.println("Police");
 			else if (this.role == 'd')

@@ -11,7 +11,7 @@ public class Client {
 		System.out.println("Please wait...");
 		try {
 			InetAddress localAddress = InetAddress.getLocalHost();
-			try (Socket cSocket = new Socket(localAddress, 10000);) {
+			try (Socket cSocket = new Socket(localAddress, 10000);) { 
 
 				ClientSend cs = new ClientSend(cSocket);
 				ClientReceive cr = new ClientReceive(cSocket);

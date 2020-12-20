@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ClientReceive implements Runnable {
+public class ClientReceive implements Runnable { 
 	private Socket sock;
 
 	ClientReceive(Socket sock) {

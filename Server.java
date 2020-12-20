@@ -63,7 +63,7 @@ public class Server {
 
 				playerSend.add(ts);
 				playerReceive.add(tr);
-
+ 
 				ts.start();
 				tr.start();
 

@@ -21,7 +21,7 @@ public class ClientSend implements Runnable {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				PrintWriter out = new PrintWriter(sock.getOutputStream());) { //,true(autoflush)
 
-			System.out.println("서버에 연결됨!");
+			System.out.println("서버에 연결됨!"); 
 			String str;
 			
 			while (true) {
