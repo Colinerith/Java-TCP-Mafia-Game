@@ -3,3 +3,7 @@
 /test.class
 /Server$player.class
 /Server$Player.class
+/ServerSend.class
+/ServerReceive.class
+/ClientSend.class
+/ClientReceive.class
