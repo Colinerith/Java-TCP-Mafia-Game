@@ -17,7 +17,7 @@ public class ClientReceive implements Runnable {
 
 			while (true) {
 				str = br.readLine();
-				System.out.println("[System]: " + str);
+				System.out.println(str);
 			}
 
 		} catch (IOException ex) {

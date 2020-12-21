@@ -16,11 +16,11 @@ public class ClientSend implements Runnable {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				PrintWriter out = new PrintWriter(sock.getOutputStream(), true);) { //,true(autoflush)
 
-			System.out.println("서버에 연결됨!"); 
+			System.out.println("accepted!"); 
 			String str;
 			
 			while (true) {
-				System.out.print("메세지 입력 : ");
+				//System.out.print("");
 				str = br.readLine();
 				if ("quit".equalsIgnoreCase(str))
 					break;

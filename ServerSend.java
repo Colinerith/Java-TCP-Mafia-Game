@@ -34,9 +34,13 @@ public class ServerSend implements Runnable {
 
 			while (true) {
 				if (status == 's') {
-					System.out.println(playerId + ": 's'상태로 바뀜");
+					//System.out.println(playerId + ": 's'상태로 바뀜");
 					out.println(this.msg);
 					this.status = 'w';
+					//System.out.println(playerId + ": 'w'상태로 바뀜");
+				}
+				else {
+					System.out.print("");
 				}
 			}
 		} catch (IOException ex) {

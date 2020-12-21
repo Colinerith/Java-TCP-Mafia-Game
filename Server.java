@@ -69,14 +69,13 @@ public class Server {
 	public static void chatting(char who) { // a:all, m:mafia끼리만
 		if (who == 'a') { // 모두가 대화. 죽은 플레이어는 지켜볼 수 있음
 			String msg;
-			for (int i = 0; i < playerNum; i++) {
-				playerReceive.get(i).status = 'r'; // 받을 수 있게 상태 바꿈
-				System.out.println(i + ": " + playerReceive.get(i).status);
-			}
+//			for (int i = 0; i < playerNum; i++) {
+//				playerReceive.get(i).status = 'r'; // 받을 수 있게 상태 바꿈
+//			}
 			while (true) {
 				for (int i = 0; i < playerNum; i++) {
 					if (playerReceive.get(i).received == true) { // 플레이어가 메시지를 입력했다면
-						msg = playerReceive.get(i).receivedMsg; // 메시지를 가져오고
+						msg = "[player" + Integer.toString(i) + "]: " + playerReceive.get(i).receivedMsg; // 메시지를 가져오고
 						playerReceive.get(i).received = false; // '메시지 받음' 상태를 false로 바꾸고
 						// 모두에게 전달
 						for (int j = 0; j < playerNum; j++) {
@@ -85,16 +84,13 @@ public class Server {
 					}
 				}
 			}
-//			for (int i = 0; i < playerNum; i++) {
-//				playerReceive.get(i).status='w';
-//			}
 		} else if (who == 'm') { // 마피아끼리 대화. 죽은 플레이어는 지켜볼 수 있음
 
 		}
 	}
 
 	public static void voting() {
-		send_message('a', "투표를 시작합니다. 마피아로 의심되는 플레이어 번호를 입력하세요: ");
+		send_message('a', "[System] Voting. Enter the number of the player: ");
 	}
 
 	public static void send_message(char who, String msg) { // 사회자가 명시된 플레이어에게 메시지를 보냄
@@ -104,13 +100,6 @@ public class Server {
 			for (int i = 0; i < playerNum; i++) {
 				playerSend.get(i).msg = msg;
 				playerSend.get(i).status = 's';
-				System.out.println(i + ": " + playerSend.get(i).msg + playerSend.get(i).status);
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		} else if (who == 'p') { // 경찰에게
 			playerSend.get(policeId).msg = msg;
@@ -129,7 +118,7 @@ public class Server {
 	}
 
 	public static void day() { // 낮-플레이어들이 채팅&투표로 용의자 지목
-		send_message('a', "낮이 되었습니다. 플레이어들은 채팅을 통해 용의자를 지목해 주세요. (제한 시간 2분)");
+		send_message('a', "[System] Daytime. Find the mafia through chat. (time limit: 2m)");
 		// java도 alarm signal 되나? 아니면 사회자가 stop을 입력하면 멈추게끔
 		chatting('a');
 		while (true)
@@ -138,7 +127,7 @@ public class Server {
 	}
 
 	public static void night() { // 밤-경찰/의사의 미션 & 마피아의 살인
-		System.out.println("밤이 되었습니다.");
+		System.out.println("[System] Night. ");
 
 		chatting('m');
 	}
