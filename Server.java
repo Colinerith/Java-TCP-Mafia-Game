@@ -1,11 +1,6 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,8 +12,8 @@ public class Server {
 	private static int doctorId; // 의사의 id
 	private static int aliveNum; // 살아있는 플레이어의 수
 	private static int mafiaNum; // 살아있는 마피아의 수
-	static ArrayList<Thread> playerSend = new ArrayList<Thread>();
-	static ArrayList<Thread> playerReceive = new ArrayList<Thread>();
+	static ArrayList<ServerSend> playerSend = new ArrayList<ServerSend>();
+	static ArrayList<ServerReceive> playerReceive = new ArrayList<ServerReceive>();
 	static Scanner scv = new Scanner(System.in);
 
 	public static void waiting_room() { // 대기실. 플레이어 모집 & 역할 분배
@@ -26,6 +21,7 @@ public class Server {
 		System.out.print("Enter the number of players(5~8): ");
 		playerNum = scv.nextInt();
 		int rand = 0;
+		mafia2Id = -1;
 
 		mafiaNum = (playerNum < 7) ? 1 : 2; // 마피아 수 결정
 		// 랜덤하게 역할 결정 (나머지는 시민)
@@ -57,18 +53,13 @@ public class Server {
 
 				// 개별스레드 생성. 수락 했을 때의 client 주소와 id를 담는다.
 				ServerSend ss = new ServerSend(clientSocket, j, role);
-				ServerReceive sr = new ServerReceive(clientSocket, j, role);
-				Thread ts = new Thread(ss);
-				Thread tr = new Thread(sr);
+				ServerReceive sr = new ServerReceive(clientSocket, j);
 
-				playerSend.add(ts);
-				playerReceive.add(tr);
- 
-				ts.start();
-				tr.start();
+				playerSend.add(ss);
+				playerReceive.add(sr);
 
-				//ss.msg = "haha";
-				//ss.status = 's';
+				new Thread(ss).start();
+				new Thread(sr).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,31 +68,73 @@ public class Server {
 
 	public static void chatting(char who) { // a:all, m:mafia끼리만
 		if (who == 'a') { // 모두가 대화. 죽은 플레이어는 지켜볼 수 있음
-
+			String msg;
+			for (int i = 0; i < playerNum; i++) {
+				playerReceive.get(i).status = 'r'; // 받을 수 있게 상태 바꿈
+				System.out.println(i + ": " + playerReceive.get(i).status);
+			}
+			while (true) {
+				for (int i = 0; i < playerNum; i++) {
+					if (playerReceive.get(i).received == true) { // 플레이어가 메시지를 입력했다면
+						msg = playerReceive.get(i).receivedMsg; // 메시지를 가져오고
+						playerReceive.get(i).received = false; // '메시지 받음' 상태를 false로 바꾸고
+						// 모두에게 전달
+						for (int j = 0; j < playerNum; j++) {
+							send_message('a', msg);
+						}
+					}
+				}
+			}
+//			for (int i = 0; i < playerNum; i++) {
+//				playerReceive.get(i).status='w';
+//			}
 		} else if (who == 'm') { // 마피아끼리 대화. 죽은 플레이어는 지켜볼 수 있음
 
 		}
 	}
 
+	public static void voting() {
+		send_message('a', "투표를 시작합니다. 마피아로 의심되는 플레이어 번호를 입력하세요: ");
+	}
+
 	public static void send_message(char who, String msg) { // 사회자가 명시된 플레이어에게 메시지를 보냄
+		// 메시지 받고 나면 ServerSend에서 status를 알아서 w로 바꿈
+
 		if (who == 'a') { // 모두에게
-
+			for (int i = 0; i < playerNum; i++) {
+				playerSend.get(i).msg = msg;
+				playerSend.get(i).status = 's';
+				System.out.println(i + ": " + playerSend.get(i).msg + playerSend.get(i).status);
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} else if (who == 'p') { // 경찰에게
-			// players.get(policeId).
+			playerSend.get(policeId).msg = msg;
+			playerSend.get(policeId).status = 's';
 		} else if (who == 'd') { // 의사에게
-
+			playerSend.get(doctorId).msg = msg;
+			playerSend.get(doctorId).status = 's';
 		} else if (who == 'm') { // 마피아에게
-
+			playerSend.get(mafia1Id).msg = msg;
+			playerSend.get(mafia1Id).status = 's';
+			if (playerNum > 6) {
+				playerSend.get(mafia2Id).msg = msg;
+				playerSend.get(mafia2Id).status = 's';
+			}
 		}
 	}
 
 	public static void day() { // 낮-플레이어들이 채팅&투표로 용의자 지목
-		// System.out.println("낮이 되었습니다.");
-		// System.out.println("플레이어들은 채팅을 통해 용의자를 지목해 주세요. (제한 시간: 2분)");
-		send_message('a', "낮이 되었습니다.\n 플레이어들은 채팅을 통해 용의자를 지목해 주세요. (제한 시간 2분)");
-		// java도 alarm signal 되나?
+		send_message('a', "낮이 되었습니다. 플레이어들은 채팅을 통해 용의자를 지목해 주세요. (제한 시간 2분)");
+		// java도 alarm signal 되나? 아니면 사회자가 stop을 입력하면 멈추게끔
 		chatting('a');
-
+		while (true)
+			;
+		// voting();
 	}
 
 	public static void night() { // 밤-경찰/의사의 미션 & 마피아의 살인
@@ -117,8 +150,8 @@ public class Server {
 			waiting_room(); // 플레이어 수를 입력받고 그 수만큼 플레이어가 찰 때까지 기다림
 
 			while (mafiaNum != 0 && mafiaNum != aliveNum / 2) { // 조건 : 마피아수=0 or 마피아수:시민수 = 1:1
-				//day();
-				//night();
+				day();
+				night();
 			}
 
 			System.out.println("The Winner is: ");

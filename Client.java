@@ -1,10 +1,6 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 	public static void main(String[] args) {
@@ -25,7 +21,7 @@ public class Client {
 				tr.start();
 				
 				while(true) {
-					//일단..
+					//대기
 				}
 			}
 		} catch (IOException ex) {
