@@ -22,8 +22,8 @@ public class ClientSend implements Runnable {
 			while (true) {
 				//System.out.print("");
 				str = br.readLine();
-				if ("quit".equalsIgnoreCase(str))
-					break;
+//				if ("quit".equalsIgnoreCase(str))
+//					break;
 				out.println(str); // to server
 			}
 		} catch (IOException ex) {
