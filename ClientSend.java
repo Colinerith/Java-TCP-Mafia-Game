@@ -14,7 +14,7 @@ public class ClientSend implements Runnable {
 	@Override
 	public void run() {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-				PrintWriter out = new PrintWriter(sock.getOutputStream(), true);) { //,true(autoflush)
+				PrintWriter out = new PrintWriter(sock.getOutputStream(), true);) {
 
 			System.out.println("accepted!"); 
 			String str;
@@ -24,7 +24,7 @@ public class ClientSend implements Runnable {
 				str = br.readLine();
 				if ("quit".equalsIgnoreCase(str))
 					break;
-				out.println(str); // 서버에 키보드 입력 스트링을 전송
+				out.println(str); // to server
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();

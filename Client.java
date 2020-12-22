@@ -14,14 +14,11 @@ public class Client {
 				Thread ts = new Thread(cs);
 				Thread tr = new Thread(cr);
 
-				// playerSend.add(ts);
-				// playerReceive.add(tr);
-
 				ts.start();
 				tr.start();
 				
 				while(true) {
-					//대기
+					//
 				}
 			}
 		} catch (IOException ex) {

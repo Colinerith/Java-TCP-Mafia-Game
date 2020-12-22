@@ -5,9 +5,10 @@ import java.net.Socket;
 public class ServerSend implements Runnable {
 	private Socket clientSocket;
 	private int playerId; // 해당 플레이어 id
-	private char role;
+	public char role;
 	public String msg;
 	public char status; // w:wait.기다리기 s:send 보내기
+	public boolean alive;
 
 	ServerSend(Socket clientSocket, int id, char r) {
 		this.playerId = id;
@@ -15,6 +16,7 @@ public class ServerSend implements Runnable {
 		this.role = r;
 		this.msg = "";
 		this.status = 'w';
+		this.alive = true;
 	}
 
 	@Override
@@ -34,12 +36,11 @@ public class ServerSend implements Runnable {
 
 			while (true) {
 				if (status == 's') {
-					//System.out.println(playerId + ": 's'상태로 바뀜");
+					// System.out.println(playerId + ": 's'상태로 바뀜");
 					out.println(this.msg);
 					this.status = 'w';
-					//System.out.println(playerId + ": 'w'상태로 바뀜");
-				}
-				else {
+					// System.out.println(playerId + ": 'w'상태로 바뀜");
+				} else {
 					System.out.print("");
 				}
 			}

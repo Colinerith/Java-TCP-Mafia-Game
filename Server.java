@@ -14,6 +14,8 @@ public class Server {
 	private static int mafiaNum; // 살아있는 마피아의 수
 	static ArrayList<ServerSend> playerSend = new ArrayList<ServerSend>();
 	static ArrayList<ServerReceive> playerReceive = new ArrayList<ServerReceive>();
+	// static ArrayList<Boolean> isAlive = new ArrayList<Boolean>(); // 각 플레이어들이
+	// 살아있는지
 	static Scanner scv = new Scanner(System.in);
 
 	public static void waiting_room() { // 대기실. 플레이어 모집 & 역할 분배
@@ -22,6 +24,8 @@ public class Server {
 		playerNum = scv.nextInt();
 		int rand = 0;
 		mafia2Id = -1;
+		for (int i = 0; i < playerNum; i++)
+			isAlive.add(true);
 
 		mafiaNum = (playerNum < 7) ? 1 : 2; // 마피아 수 결정
 		// 랜덤하게 역할 결정 (나머지는 시민)
@@ -67,14 +71,15 @@ public class Server {
 	}
 
 	public static void chatting(char who) { // a:all, m:mafia끼리만
+		String msg;
 		if (who == 'a') { // 모두가 대화. 죽은 플레이어는 지켜볼 수 있음
-			String msg;
 //			for (int i = 0; i < playerNum; i++) {
 //				playerReceive.get(i).status = 'r'; // 받을 수 있게 상태 바꿈
 //			}
 			while (true) {
 				for (int i = 0; i < playerNum; i++) {
-					if (playerReceive.get(i).received == true) { // 플레이어가 메시지를 입력했다면
+					if (playerReceive.get(i).alive == true && playerReceive.get(i).received == true) { // 플레이어가 메시지를
+																										// 입력했다면
 						msg = "[player" + Integer.toString(i) + "]: " + playerReceive.get(i).receivedMsg; // 메시지를 가져오고
 						playerReceive.get(i).received = false; // '메시지 받음' 상태를 false로 바꾸고
 						// 모두에게 전달
@@ -84,13 +89,55 @@ public class Server {
 					}
 				}
 			}
-		} else if (who == 'm') { // 마피아끼리 대화. 죽은 플레이어는 지켜볼 수 있음
-
+		} else if (who == 'm') { // 마피아 두명끼리 대화. 죽은 플레이어는 지켜볼 수 있음
+			while (true) {
+				for (int i = 0; i < playerNum; i++) {
+					if (playerReceive.get(i).alive == true && playerReceive.get(i).received == true) { // 플레이어가 메시지를
+																										// 입력했다면
+						msg = "[player" + Integer.toString(i) + "]: " + playerReceive.get(i).receivedMsg; // 메시지를 가져오고
+						playerReceive.get(i).received = false; // '메시지 받음' 상태를 false로 바꾸고
+						// 모두에게 전달
+						for (int j = 0; j < playerNum; j++) {
+							send_message('a', msg);
+						}
+					}
+				}
+			}
 		}
 	}
 
 	public static void voting() {
-		send_message('a', "[System] Voting. Enter the number of the player: ");
+		send_message('a', "[System] Voting. Enter the number of the player within 5 seconds.");
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		int v, maxidx = 0, max = 0;
+		int[] intArr = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		for (int i = 0; i < playerNum; i++) {
+			if (playerReceive.get(i).alive == true && playerReceive.get(i).received == true) {
+				v = Integer.parseInt(playerReceive.get(i).receivedMsg);
+				playerReceive.get(i).received = false;
+				intArr[v]++;
+			}
+		}
+		for (int i = 0; i < playerNum; i++) {
+			if (intArr[i] > max) {
+				max = intArr[i];
+				maxidx = i;
+			}
+		}
+		String msg = "[System] Player" + Integer.toString(maxidx) + " was ";
+		if (playerSend.get(maxidx).role == 'm')
+			msg += "a Mafia.";
+		else
+			msg += " not a Mafia.";
+		send_message('a', msg);
+
+		aliveNum = aliveNum - 1;
+		playerSend.get(maxidx).alive = false; // 죽은 상태로 만듦
+		playerReceive.get(maxidx).alive = false;
 	}
 
 	public static void send_message(char who, String msg) { // 사회자가 명시된 플레이어에게 메시지를 보냄
@@ -101,35 +148,45 @@ public class Server {
 				playerSend.get(i).msg = msg;
 				playerSend.get(i).status = 's';
 			}
-		} else if (who == 'p') { // 경찰에게
-			playerSend.get(policeId).msg = msg;
-			playerSend.get(policeId).status = 's';
-		} else if (who == 'd') { // 의사에게
-			playerSend.get(doctorId).msg = msg;
-			playerSend.get(doctorId).status = 's';
-		} else if (who == 'm') { // 마피아에게
+		} else if (who == 'm') { // 마피아와 죽은 사람들만 받는 메시지
+			for (int i = 0; i < playerNum; i++) {
+				if (playerSend.get(i).alive == false && playerSend.get(i).role != 'm') {
+					playerSend.get(i).msg = msg;
+					playerSend.get(i).status = 's';
+				}
+			}
 			playerSend.get(mafia1Id).msg = msg;
 			playerSend.get(mafia1Id).status = 's';
-			if (playerNum > 6) {
-				playerSend.get(mafia2Id).msg = msg;
-				playerSend.get(mafia2Id).status = 's';
-			}
+			playerSend.get(mafia2Id).msg = msg;
+			playerSend.get(mafia2Id).status = 's';
 		}
 	}
 
 	public static void day() { // 낮-플레이어들이 채팅&투표로 용의자 지목
-		send_message('a', "[System] Daytime. Find the mafia through chat. (time limit: 2m)");
-		// java도 alarm signal 되나? 아니면 사회자가 stop을 입력하면 멈추게끔
+		send_message('a', "[System] Daytime. Find the mafia through chat. Enter 'quit' to end the chat.");
 		chatting('a');
-		while (true)
-			;
-		// voting();
+		voting();
+	}
+
+	public static void kill(int n) {
+		if (n == 1) {
+
+		} else {
+
+		}
 	}
 
 	public static void night() { // 밤-경찰/의사의 미션 & 마피아의 살인
-		System.out.println("[System] Night. ");
-
-		chatting('m');
+		if (mafiaNum == 1) { // 마피아가 한 명이면
+			send_message('a', "[System] Night. (Only Mafia) Enter the number of the player to kill.");
+			kill(1);
+		} else { // 마피아가 두명이면
+			send_message('a',
+					"[System] Night. (Only Mafia) Choose a player to kill through chat. Enter 'quit' to end the chat.");
+			chatting('m'); // 마피아끼리 대화
+			send_message('a', "[System] (Only Mafia) Enter the number of the player to kill.");
+			kill(2);
+		}
 	}
 
 	public static void main(String[] args) {
@@ -140,10 +197,15 @@ public class Server {
 
 			while (mafiaNum != 0 && mafiaNum != aliveNum / 2) { // 조건 : 마피아수=0 or 마피아수:시민수 = 1:1
 				day();
+				if (mafiaNum != 0 && mafiaNum != aliveNum / 2)
+					break;
 				night();
 			}
 
-			System.out.println("The Winner is: ");
+			String msg = "The Winner is: " + ((mafiaNum == 0) ? "Citizen" : "Mafia");
+			System.out.println(msg);
+			send_message('a', msg);
+
 			System.out.println("Restart game? (Y/N): ");
 			char restart = scv.next().charAt(0);
 			if (restart == 'N')
