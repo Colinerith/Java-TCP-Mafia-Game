@@ -9,3 +9,5 @@
 /ClientReceive.class
 /ServerManager.class
 /Server2.class
+/Server$ServerReceive.class
+/Server$ServerSend.class

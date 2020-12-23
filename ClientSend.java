@@ -20,10 +20,7 @@ public class ClientSend implements Runnable {
 			String str;
 			
 			while (true) {
-				//System.out.print("");
 				str = br.readLine();
-//				if ("quit".equalsIgnoreCase(str))
-//					break;
 				out.println(str); // to server
 			}
 		} catch (IOException ex) {
