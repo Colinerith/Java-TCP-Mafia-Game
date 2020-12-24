@@ -275,7 +275,7 @@ public class Server {
 			night();
 		}
 
-		String msg = "[System]: The Winner is " + ((mafiaNum == 0) ? "Citizen" : "Mafia");
+		String msg = "[System]: The Winner is :" + ((mafiaNum == 0) ? "Citizen" : "Mafia");
 		System.out.println(msg);
 		send_message('a', msg);
 
