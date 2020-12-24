@@ -233,7 +233,7 @@ public class Server {
 				playerReceive.get(doctorId).received = false;
 			}
 			if (saveWho == killWho) { // 의사 미션 성공
-				send_message('a', "The doctor saved the player. No one died.");
+				send_message('a', "[System]: The doctor saved the player. No one died.");
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
@@ -242,7 +242,7 @@ public class Server {
 			} else { // 실패
 				alives.put(killWho, false); // 마피아에게 지목된 플레이어를 죽은 상태로 바꿈
 				aliveNum--;
-				String msg = "Player" + Integer.toString(killWho) + " has just died. Alive players: "
+				String msg = "[System]: Player" + Integer.toString(killWho) + " has just died. Alive players: "
 						+ Integer.toString(aliveNum) + ", Alive Mafia: " + Integer.toString(mafiaNum);
 				send_message('a', msg);
 				try {
@@ -254,8 +254,8 @@ public class Server {
 		} else { // 의사가 이미 죽어있다면, 지목된 플레이어는 살아날 기회 없이 죽음
 			alives.put(killWho, false); // 해당 플레이어를 죽은 상태로 바꿈
 			aliveNum--;
-			String msg = "Player" + Integer.toString(killWho) + " has just died. " + Integer.toString(aliveNum)
-					+ " players are alive.";
+			String msg = "[System]: Player" + Integer.toString(killWho) + " has just died. Alive players: "
+						+ Integer.toString(aliveNum) + ", Alive Mafia: " + Integer.toString(mafiaNum);
 			send_message('a', msg);
 			try {
 				Thread.sleep(3000);
@@ -275,7 +275,7 @@ public class Server {
 			night();
 		}
 
-		String msg = "The Winner is: " + ((mafiaNum == 0) ? "Citizen" : "Mafia");
+		String msg = "[System]: The Winner is " + ((mafiaNum == 0) ? "Citizen" : "Mafia");
 		System.out.println(msg);
 		send_message('a', msg);
 
