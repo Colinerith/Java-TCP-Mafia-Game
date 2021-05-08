@@ -42,7 +42,7 @@
  - 서버에서 생성한 각 쓰레드들: 메시지 전달 및 받아오는 역할
  					- ServerSend Thread	   <-> player(Client)0의 ClientReceive Thread
  	 				- ServerReceive Thread <-> player(Client)0의 ClientSend Thread
- 	사회자	 <-> 			
+
  					- ServerSend Thread	   <-> player(Client)1의 ClientReceive Thread
  				 	- ServerReceive Thread <-> player(Client)1의 ClientSend Thread
  					
